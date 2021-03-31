@@ -1,22 +1,23 @@
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken');
+
+const {JWT_KEY} = require("../config")
 
 const verifyToken = (req, res, next) => {
-  const header = req.headers.authorization;
+  const header = req.headers.authorization
   if (!header) {
     res.json({
-      message: "undefined header",
-    });
+      message: "undefined header"
+    })
   }
 
-  const token = header.split(" ")[1];
+  const token = header.split(" ")[1]
+  if (!token) throw new Error("invalid token")
 
-  if (!token) throw new Error("invalid token");
+  const payload = jwt.verify(token, JWT_KEY)
 
-  const payload = jwt.verify(token, "inirahasia");
+  req.payload = payload
 
-  req.payload = payload;
+  next()
+}
 
-  next();
-};
-
-module.exports = verifyToken;
+module.exports = verifyToken
